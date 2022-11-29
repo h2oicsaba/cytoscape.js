@@ -95,6 +95,7 @@ var cy = cytoscape({
 }); // cy init
 
 cy.on('tap', 'node', function(){
+  var node = this;
   var nodes = this;
   var tapped = nodes;
   var food = [];
@@ -115,6 +116,14 @@ cy.on('tap', 'node', function(){
     if( nodes.empty() ){ break; }
   }
 
+  if (food.length==0 ) {
+    alert ("fooding the graph");
+    for( var i = node.__removedElements.length - 1; i >= 0; i-- ){
+      var thisElement = node.__removedElements[i];
+      thisElement.restore();
+     } // for
+  } else {
+  node.__removedElements = [];
   var delay = 0;
   var duration = 500;
   for( var i = food.length - 1; i >= 0; i-- ){ (function(){
@@ -136,11 +145,12 @@ cy.on('tap', 'node', function(){
     }, {
       duration: duration,
       complete: function(){
-        thisFood.remove();
+        thisRemoval=thisFood.remove();
+        Array.prototype.push.apply( node.__removedElements, thisRemoval );
       }
     });
 
     delay += duration;
   })(); } // for
-
+ } // if 
 }); // on tap
